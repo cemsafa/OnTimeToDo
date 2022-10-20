@@ -30,7 +30,7 @@ struct ContentView: View {
                 }
                 .tag(Tab.taskGroups)
             
-            Profile()
+            ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person.crop.circle.fill")
                 }
