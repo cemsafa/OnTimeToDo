@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import RealmSwift
 
 struct ContentView: View {
     @State private var selection: Tab = .allTasks
+    @StateObject var realmManager = RealmManager()
     
     enum Tab {
         case allTasks
@@ -35,6 +37,7 @@ struct ContentView: View {
                     Label("Profile", systemImage: "person.crop.circle.fill")
                 }
                 .tag(Tab.profile)
+                .environmentObject(realmManager)
         }
     }
 }

@@ -10,16 +10,16 @@ import iPhoneNumberField
 import RealmSwift
 
 struct ProfileView: View {
-    @ObservedRealmObject var profile: Profile = Profile()
+    @ObservedObject var realmManager =  RealmManager.shared
     
     @State private var name: String = ""
     @State private var phone: String = ""
     @State private var email: String = ""
     
     init() {
-        _name = State(initialValue: profile.name)
-        _phone = State(initialValue: profile.phone)
-        _email = State(initialValue: profile.email)
+        _name = State(initialValue: realmManager.profile.name)
+        _phone = State(initialValue: realmManager.profile.phone)
+        _email = State(initialValue: realmManager.profile.email)
     }
     
     var body: some View {
@@ -58,10 +58,11 @@ struct ProfileView: View {
                 Spacer()
                 
                 Button("SAVE") {
-                    if profile.name != "" && profile.phone != "" && profile.email != "" {
-                        save()
+                    let profile = realmManager.profile
+                    if profile.name == "" && profile.phone == "" && profile.email == "" {
+                        realmManager.createProfile(name: name, phone: phone, email: email)
                     } else {
-                        update()
+                        realmManager.editProfile(id: profile.id, name: name, phone: phone, email: email)
                     }
                 }
                 .buttonStyle(.bordered)
@@ -75,29 +76,11 @@ struct ProfileView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
-    
-    private func save() {
-        let realm = try! Realm()
-        try! realm.write {
-            profile.name = name
-            profile.phone = phone
-            profile.email = email
-        }
-    }
-    
-    private func update() {
-        let realm = try! Realm()
-        guard let object = realm.objects(Profile.self).first else { return }
-        try! realm.write {
-            object.name = name
-            object.phone = phone
-            object.email = email
-        }
-    }
 }
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         ProfileView()
+            .environmentObject(RealmManager())
     }
 }
