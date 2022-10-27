@@ -49,11 +49,12 @@ final class RealmManager: ObservableObject {
         if let localRealm = localRealm {
             do {
                 try localRealm.write {
-                    let profileToUpdate = localRealm.object(ofType: Profile.self, forPrimaryKey: id)
+                    let profileToUpdate = localRealm.objects(Profile.self).filter(NSPredicate(format: "id == %@", id))
+                    guard !profileToUpdate.isEmpty else { return }
                     try localRealm.write {
-                        profileToUpdate?.name = name ?? ""
-                        profileToUpdate?.phone = phone ?? ""
-                        profileToUpdate?.email = email ?? ""
+                        profileToUpdate.first!.name = name ?? profileToUpdate.first!.name
+                        profileToUpdate.first!.phone = phone ?? profileToUpdate.first!.phone
+                        profileToUpdate.first!.email = email ?? profileToUpdate.first!.email
                     }
                 }
             } catch {

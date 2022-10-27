@@ -15,6 +15,7 @@ struct ProfileView: View {
     @State private var name: String = ""
     @State private var phone: String = ""
     @State private var email: String = ""
+    @State private var isEditing = false
     
     init() {
         _name = State(initialValue: realmManager.profile.name)
@@ -27,53 +28,55 @@ struct ProfileView: View {
             VStack {
                 ZStack {
                     CoverPhoto(image: Image("cover"))
-                    ProfilePhoto(image: Image("profile"))
+                    ProfilePhoto()
                 }
                 
                 Spacer()
                 
+                Text(realmManager.profile.name)
+                    .font(.title)
+                    .multilineTextAlignment(.center)
+                
                 List {
-                    TextField("Name", text: $name)
-                        .font(.title)
-                        .multilineTextAlignment(.center)
-                    
                     HStack {
                         Text("Phone")
                             .bold()
                         Divider()
-                        iPhoneNumberField("Phone", text: $phone)
+                        Text(realmManager.profile.phone)
                     }
                     
                     HStack {
                         Text("Email")
                             .bold()
                         Divider()
-                        TextField("Email", text: $email)
+                        Text(realmManager.profile.email)
                     }
                 }
                 .onAppear {
                     UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 50)
                 }
-                
-                Spacer()
-                
-                Button("SAVE") {
-                    let profile = realmManager.profile
-                    if profile.name == "" && profile.phone == "" && profile.email == "" {
-                        realmManager.createProfile(name: name, phone: phone, email: email)
-                    } else {
-                        realmManager.editProfile(id: profile.id, name: name, phone: phone, email: email)
-                    }
-                }
-                .buttonStyle(.bordered)
-                .foregroundColor(.white)
-                .background(Color.accentColor)
-                .cornerRadius(8)
-                .padding()
-                Spacer()
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        isEditing = true
+                    } label: {
+                        Text("Edit")
+                    }
+                }
+            }
+            .sheet(isPresented: $isEditing) {
+                NavigationView {
+                    EditProfile(isEditing: $isEditing)
+                        .navigationBarItems(trailing: Button(action: {
+                            self.isEditing.toggle()
+                        }, label: {
+                            Text("Cancel")
+                        }))
+                }
+            }
         }
     }
 }

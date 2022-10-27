@@ -23,6 +23,8 @@ struct CoverPhoto: View {
 }
 
 struct CameraOverlay: View {
+    @State private var showingOptions = false
+    
     var gradient: LinearGradient {
         .linearGradient(Gradient(colors: [.black.opacity(0.6), .black.opacity(0)]), startPoint: .bottom, endPoint: .center)
     }
@@ -31,7 +33,23 @@ struct CameraOverlay: View {
         ZStack(alignment: .bottomTrailing) {
             gradient
             VStack(alignment: .leading) {
-                Image(systemName: "camera.fill")
+                Button {
+                    showingOptions = true
+                } label: {
+                    Image(systemName: "camera.fill")
+                }
+                .confirmationDialog("Add cover photo", isPresented: $showingOptions, titleVisibility: .visible) {
+                    Button {
+                        
+                    } label: {
+                        Text("Image Library")
+                    }
+                    Button {
+                        
+                    } label: {
+                        Text("Camera")
+                    }
+                }
             }
             .padding()
         }
