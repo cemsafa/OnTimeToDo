@@ -28,37 +28,26 @@ final class RealmManager: ObservableObject {
         }
     }
     
-    func createProfile(name: String, phone: String, email: String) {
+    func createUpdateProfile(name: String, phone: String, email: String) {
         if let localRealm = localRealm {
             do {
                 try localRealm.write {
-                    let newProfile = Profile(value: [
-                        "name": name,
-                        "phone": phone,
-                        "email": email
-                    ])
-                    localRealm.add(newProfile)
-                }
-            } catch {
-                print("Error creating profile on Realm: \(error)")
-            }
-        }
-    }
-    
-    func editProfile(id: ObjectId, name: String?, phone: String?, email: String?) {
-        if let localRealm = localRealm {
-            do {
-                try localRealm.write {
-                    let profileToUpdate = localRealm.objects(Profile.self).filter(NSPredicate(format: "id == %@", id))
-                    guard !profileToUpdate.isEmpty else { return }
-                    try localRealm.write {
-                        profileToUpdate.first!.name = name ?? profileToUpdate.first!.name
-                        profileToUpdate.first!.phone = phone ?? profileToUpdate.first!.phone
-                        profileToUpdate.first!.email = email ?? profileToUpdate.first!.email
+                    if let profileToUpdate = localRealm.objects(Profile.self).first {
+                        profileToUpdate.name = name
+                        profileToUpdate.phone = phone
+                        profileToUpdate.email = email
+                        localRealm.add(profileToUpdate, update: .modified)
+                    } else {
+                        let newProfile = Profile(value: [
+                            "name": name,
+                            "phone": phone,
+                            "email": email
+                        ])
+                        localRealm.add(newProfile, update: .modified)
                     }
                 }
             } catch {
-                print("Error editing profile on Realm: \(error)")
+                print("Error creating profile on Realm: \(error)")
             }
         }
     }

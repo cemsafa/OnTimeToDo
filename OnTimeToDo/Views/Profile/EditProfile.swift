@@ -9,18 +9,20 @@ import SwiftUI
 import iPhoneNumberField
 
 struct EditProfile: View {
+    let onSave: () -> ()
     @ObservedObject var realmManager =  RealmManager.shared
     @Binding public var isEditing: Bool
     
-    @State private var name: String = ""
-    @State private var phone: String = ""
-    @State private var email: String = ""
+    @Binding public var name: String
+    @Binding public var phone: String
+    @Binding public var email: String
     
     var body: some View {
         VStack {
             List {
                 TextField("Name", text: $name)
                     .font(.title)
+                    .textInputAutocapitalization(.words)
                     .multilineTextAlignment(.center)
                 
                 HStack {
@@ -28,6 +30,7 @@ struct EditProfile: View {
                         .bold()
                     Divider()
                     iPhoneNumberField("Phone", text: $phone)
+                        .keyboardType(.phonePad)
                 }
                 
                 HStack {
@@ -35,14 +38,17 @@ struct EditProfile: View {
                         .bold()
                     Divider()
                     TextField("Email", text: $email)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.emailAddress)
                 }
             }
             .onAppear {
                 UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 50)
             }
             Button("SAVE") {
-                realmManager.editProfile(id: realmManager.profile.id, name: name, phone: phone, email: email)
+                realmManager.createUpdateProfile(name: name, phone: phone, email: email)
                 isEditing.toggle()
+                onSave()
             }
             .buttonStyle(.bordered)
             .foregroundColor(.white)
@@ -53,8 +59,8 @@ struct EditProfile: View {
     }
 }
 
-//struct EditProfile_Previews: PreviewProvider {
-//    static var previews: some View {
-//        EditProfile()
-//    }
-//}
+struct EditProfile_Previews: PreviewProvider {
+    static var previews: some View {
+        EditProfile(onSave: {}, isEditing: .constant(true), name: .constant("John Doe"), phone: .constant("(234) 567 8901"), email: .constant("johndoe@mail.com"))
+    }
+}

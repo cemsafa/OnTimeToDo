@@ -69,7 +69,7 @@ struct ProfileView: View {
             }
             .sheet(isPresented: $isEditing) {
                 NavigationView {
-                    EditProfile(isEditing: $isEditing)
+                    EditProfile(onSave: realmManager.getProfile, isEditing: $isEditing, name: $name, phone: $phone, email: $email)
                         .navigationBarItems(trailing: Button(action: {
                             self.isEditing.toggle()
                         }, label: {
