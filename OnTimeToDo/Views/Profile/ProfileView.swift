@@ -27,7 +27,7 @@ struct ProfileView: View {
         NavigationView {
             VStack {
                 ZStack {
-                    CoverPhoto(image: Image("cover"))
+                    CoverPhoto()
                     ProfilePhoto()
                 }
                 

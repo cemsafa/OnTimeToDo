@@ -13,4 +13,6 @@ class Profile: Object, ObjectKeyIdentifiable {
     @Persisted var name: String
     @Persisted var phone: String
     @Persisted var email: String
+    @Persisted var profilePhotoPath: String
+    @Persisted var coverPhotoPath: String
 }

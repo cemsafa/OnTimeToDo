@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfilePhoto: View {
+    @ObservedObject var realmManager =  RealmManager.shared
     @State private var showingOptions = false
     @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
     @State private var isImagePickerShowing = false
@@ -26,7 +27,7 @@ struct ProfilePhoto: View {
                     }
                     .shadow(radius: 7)
             } else {
-                Image(uiImage: UIImage(imageLiteralResourceName: "profile"))
+                Image(uiImage: Helper.loadImageFromPath(realmManager.profile.profilePhotoPath) ?? UIImage(imageLiteralResourceName: "profile"))
                     .resizable()
                     .scaledToFill()
                     .frame(width: 150, height: 150)
@@ -61,6 +62,13 @@ struct ProfilePhoto: View {
             }
             .sheet(isPresented: $isImagePickerShowing) {
                 ImagePicker(selectedImage: $selectedImage, sourceType: sourceType)
+            }
+            .onChange(of: selectedImage) { image in
+                if let image = image {
+                    if let path = Helper.getPathFromImage(image, photoType: .profile) {
+                        realmManager.updateProfilePhoto(profilePhotoPath: path)
+                    }
+                }
             }
         }
     }

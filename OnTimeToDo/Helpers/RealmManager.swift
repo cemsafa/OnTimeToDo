@@ -52,6 +52,36 @@ final class RealmManager: ObservableObject {
         }
     }
     
+    func updateProfilePhoto(profilePhotoPath: String) {
+        if let localRealm = localRealm {
+            do {
+                try localRealm.write {
+                    if let profileToUpdate = localRealm.objects(Profile.self).first {
+                        profileToUpdate.profilePhotoPath = profilePhotoPath
+                        localRealm.add(profileToUpdate, update: .modified)
+                    }
+                }
+            } catch {
+                print("Error updating profile with profile photo on Realm: \(error)")
+            }
+        }
+    }
+    
+    func updateProfileCover(coverPhotoPath: String) {
+        if let localRealm = localRealm {
+            do {
+                try localRealm.write {
+                    if let profileToUpdate = localRealm.objects(Profile.self).first {
+                        profileToUpdate.coverPhotoPath = coverPhotoPath
+                        localRealm.add(profileToUpdate, update: .modified)
+                    }
+                }
+            } catch {
+                print("Error updateing profile with cover photo on Realm: \(error)")
+            }
+        }
+    }
+    
     func getProfile() {
         if let localRealm = localRealm {
             profile = localRealm.objects(Profile.self).first ?? Profile()
