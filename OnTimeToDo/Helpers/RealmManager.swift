@@ -119,11 +119,27 @@ final class RealmManager: ObservableObject {
         }
     }
     
-    func createTask(taskGroupId: ObjectId, name: String, definition: String, deadLine: String, status: Task.Status) {
+    func deleteTaskGroup(id: ObjectId) {
+        if let localRealm = localRealm {
+            do {
+                let taskGroupToDelete = localRealm.objects(TaskGroup.self).filter(NSPredicate(format: "id == %@", id))
+                guard !taskGroupToDelete.isEmpty else { return }
+                try localRealm.write {
+                    localRealm.delete(taskGroupToDelete)
+                    getTaskGroups()
+                }
+            } catch {
+                print("Error deleting TaskGroup on Realm: \(error)")
+            }
+        }
+    }
+    
+    func createTask(taskGroupId: ObjectId, name: String, definition: String, deadLine: Date, status: Task.Status) {
+        var newTask = Task()
         if let localRealm = localRealm {
             do {
                 try localRealm.write {
-                    let newTask = Task(value: [
+                    newTask = Task(value: [
                         "name": name,
                         "definition": definition,
                         "deadLine": deadLine,
@@ -131,12 +147,12 @@ final class RealmManager: ObservableObject {
                     ])
                     localRealm.add(newTask)
                     getTasks()
-                    let taskGroupToUpdate = localRealm.objects(TaskGroup.self).filter(NSPredicate(format: "id == %@", taskGroupId))
-                    guard !taskGroupToUpdate.isEmpty else { return }
-                    try localRealm.write {
-                        taskGroupToUpdate.first!.tasks.append(newTask)
-                        getTaskGroups()
-                    }
+                }
+                let taskGroupToUpdate = localRealm.objects(TaskGroup.self).filter(NSPredicate(format: "id == %@", taskGroupId))
+                guard !taskGroupToUpdate.isEmpty else { return }
+                try localRealm.write {
+                    taskGroupToUpdate.first!.tasks.append(newTask)
+                    getTaskGroups()
                 }
             } catch {
                 print("Error creating Task on Realm: \(error)")
@@ -150,6 +166,21 @@ final class RealmManager: ObservableObject {
             tasks = []
             allTasks.forEach { task in
                 tasks.append(task)
+            }
+        }
+    }
+    
+    func deleteTask(id: ObjectId) {
+        if let localRealm = localRealm {
+            do {
+                let taskToDelete = localRealm.objects(Task.self).filter(NSPredicate(format: "id == %@", id))
+                guard !taskToDelete.isEmpty else { return }
+                try localRealm.write {
+                    localRealm.delete(taskToDelete)
+                    getTasks()
+                }
+            } catch {
+                print("Error deleting TaskGroup on Realm: \(error)")
             }
         }
     }

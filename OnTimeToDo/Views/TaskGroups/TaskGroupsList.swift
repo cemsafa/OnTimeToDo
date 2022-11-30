@@ -11,15 +11,30 @@ struct TaskGroupsList: View {
     @ObservedObject var realmManager = RealmManager.shared
     @State private var selectedTaskGroup: TaskGroup?
     @State private var isAddingNew = false
+    @State private var showingAlert = false
     
     var body: some View {
         NavigationView {
             List(selection: $selectedTaskGroup) {
                 ForEach(realmManager.taskGroups) { taskGroup in
                     NavigationLink {
-                        TaskGroupsDetail()
+                        TaskGroupsDetail(taskGroup: taskGroup)
                     } label: {
                         TaskGroupsRow(taskGroup: taskGroup)
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button(role: .destructive) {
+                            if taskGroup.tasks.count != 0 {
+                                showingAlert = true
+                            } else {
+                                realmManager.deleteTaskGroup(id: taskGroup.id)
+                            }
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                        .alert(isPresented: $showingAlert) {
+                            Alert(title: Text("Task Group Has Tasks"), dismissButton: .cancel())
+                        }
                     }
                 }
             }

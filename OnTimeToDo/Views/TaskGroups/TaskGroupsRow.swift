@@ -20,10 +20,8 @@ struct TaskGroupsRow: View {
 }
 
 struct TaskGroupsRow_Previews: PreviewProvider {
-    static var taskGroups = RealmManager().taskGroups
-    
     static var previews: some View {
-        TaskGroupsRow(taskGroup: taskGroups[0])
+        TaskGroupsRow(taskGroup: RealmManager.shared.taskGroups[0])
             .previewLayout(.fixed(width: 300, height: 70))
     }
 }

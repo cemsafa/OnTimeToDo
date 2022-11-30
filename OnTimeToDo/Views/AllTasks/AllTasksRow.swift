@@ -15,7 +15,7 @@ struct AllTasksRow: View {
             VStack(alignment: .leading) {
                 Text(task.name)
                     .bold()
-                Helper.formatDate(date: Helper.stringToDate(task.deadLine))
+                Helper.formatDate(date: task.deadLine)
             }
             
             Spacer()

@@ -12,6 +12,7 @@ struct AddTaskGroup: View {
     @ObservedObject var realmManager = RealmManager.shared
     @Binding public var isAddingNew: Bool
     @State private var name: String = ""
+    @State private var showingAlert = false
     
     var body: some View {
         VStack {
@@ -33,9 +34,16 @@ struct AddTaskGroup: View {
             Spacer()
             
             Button("SAVE") {
-                realmManager.createTaskGroup(name: name)
-                isAddingNew.toggle()
-                onSave()
+                if name == "" {
+                    showingAlert = true
+                } else {
+                    realmManager.createTaskGroup(name: name)
+                    isAddingNew.toggle()
+                    onSave()
+                }
+            }
+            .alert(isPresented: $showingAlert) {
+                Alert(title: Text("Name is empty"), dismissButton: .cancel())
             }
             .buttonStyle(.bordered)
             .foregroundColor(.white)

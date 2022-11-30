@@ -12,7 +12,7 @@ class Task: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var name: String
     @Persisted var definition: String
-    @Persisted var deadLine: String
+    @Persisted var deadLine: Date
     @Persisted var status: Status
     
     enum Status: String, PersistableEnum {
