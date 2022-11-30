@@ -17,23 +17,22 @@ struct TaskGroupsList: View {
         NavigationView {
             List(selection: $selectedTaskGroup) {
                 ForEach(realmManager.taskGroups) { taskGroup in
-                    NavigationLink {
-                        TaskGroupsDetail(taskGroup: taskGroup)
-                    } label: {
-                        TaskGroupsRow(taskGroup: taskGroup)
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(role: .destructive) {
-                            if taskGroup.tasks.count != 0 {
-                                showingAlert = true
-                            } else {
-                                realmManager.deleteTaskGroup(id: taskGroup.id)
-                            }
+                    if !taskGroup.isInvalidated {
+                        NavigationLink {
+                            TaskGroupsDetail(taskGroup: taskGroup)
                         } label: {
-                            Label("Delete", systemImage: "trash")
+                            TaskGroupsRow(taskGroup: taskGroup)
                         }
-                        .alert(isPresented: $showingAlert) {
-                            Alert(title: Text("Task Group Has Tasks"), dismissButton: .cancel())
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                if taskGroup.tasks.count != 0 {
+                                    showingAlert = true
+                                } else {
+                                    realmManager.deleteTaskGroup(id: taskGroup.id)
+                                }
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
                         }
                     }
                 }
@@ -61,6 +60,9 @@ struct TaskGroupsList: View {
                                 .foregroundColor(.red)
                         }))
                 }
+            }
+            .alert(isPresented: $showingAlert) {
+                Alert(title: Text("Task Group Has Tasks"), dismissButton: .cancel())
             }
         }
     }
