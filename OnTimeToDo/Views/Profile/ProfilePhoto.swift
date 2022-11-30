@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfilePhoto: View {
-    @ObservedObject var realmManager =  RealmManager.shared
+    @ObservedObject var realmManager = RealmManager.shared
     @State private var showingOptions = false
     @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
     @State private var isImagePickerShowing = false

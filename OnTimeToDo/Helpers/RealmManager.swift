@@ -12,10 +12,14 @@ final class RealmManager: ObservableObject {
     static let shared = RealmManager()
     private(set) var localRealm: Realm?
     @Published private(set) var profile: Profile = Profile()
+    @Published private(set) var taskGroups: [TaskGroup] = []
+    @Published private(set) var tasks: [Task] = []
     
     init() {
         openRealm()
         getProfile()
+        getTaskGroups()
+        getTasks()
     }
     
     func openRealm() {
@@ -85,6 +89,68 @@ final class RealmManager: ObservableObject {
     func getProfile() {
         if let localRealm = localRealm {
             profile = localRealm.objects(Profile.self).first ?? Profile()
+        }
+    }
+    
+    func createTaskGroup(name: String) {
+        if let localRealm = localRealm {
+            do {
+                try localRealm.write {
+                    let newTaskGroup = TaskGroup(value: [
+                        "name": name,
+                        "tasks": []
+                    ])
+                    localRealm.add(newTaskGroup)
+                    getTaskGroups()
+                }
+            } catch {
+                print("Error creating TaskGroup on Realm: \(error)")
+            }
+        }
+    }
+    
+    func getTaskGroups() {
+        if let localRealm = localRealm {
+            let allTaskGroups = localRealm.objects(TaskGroup.self)
+            taskGroups = []
+            allTaskGroups.forEach { taskGroup in
+                taskGroups.append(taskGroup)
+            }
+        }
+    }
+    
+    func createTask(taskGroupId: ObjectId, name: String, definition: String, deadLine: String, status: Task.Status) {
+        if let localRealm = localRealm {
+            do {
+                try localRealm.write {
+                    let newTask = Task(value: [
+                        "name": name,
+                        "definition": definition,
+                        "deadLine": deadLine,
+                        "status": status
+                    ])
+                    localRealm.add(newTask)
+                    getTasks()
+                    let taskGroupToUpdate = localRealm.objects(TaskGroup.self).filter(NSPredicate(format: "id == %@", taskGroupId))
+                    guard !taskGroupToUpdate.isEmpty else { return }
+                    try localRealm.write {
+                        taskGroupToUpdate.first!.tasks.append(newTask)
+                        getTaskGroups()
+                    }
+                }
+            } catch {
+                print("Error creating Task on Realm: \(error)")
+            }
+        }
+    }
+    
+    func getTasks() {
+        if let localRealm = localRealm {
+            let allTasks = localRealm.objects(Task.self)
+            tasks = []
+            allTasks.forEach { task in
+                tasks.append(task)
+            }
         }
     }
 }

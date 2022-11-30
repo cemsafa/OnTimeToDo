@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CoverPhoto: View {
-    @ObservedObject var realmManager =  RealmManager.shared
+    @ObservedObject var realmManager = RealmManager.shared
     @State private var selectedImage: UIImage?
     
     var gradient: LinearGradient {
@@ -31,7 +31,7 @@ struct CoverPhoto: View {
 }
 
 struct CameraOverlay: View {
-    @ObservedObject var realmManager =  RealmManager.shared
+    @ObservedObject var realmManager = RealmManager.shared
     @State private var showingOptions = false
     @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
     @State private var isImagePickerShowing = false

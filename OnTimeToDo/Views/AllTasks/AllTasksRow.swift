@@ -37,7 +37,7 @@ struct AllTasksRow: View {
 }
 
 struct AllTasksRow_Previews: PreviewProvider {
-    static var tasks = DataLoad().tasks
+    static var tasks = RealmManager().tasks
     
     static var previews: some View {
         AllTasksRow(task: tasks[0])

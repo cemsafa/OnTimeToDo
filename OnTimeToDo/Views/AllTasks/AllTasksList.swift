@@ -8,14 +8,13 @@
 import SwiftUI
 
 struct AllTasksList: View {
-    @EnvironmentObject var dataLoad: DataLoad
+    @ObservedObject var realmManager = RealmManager.shared
     @State private var selectedTask: Task?
-    var mockData: [Task] = DataLoad().tasks
     
     var body: some View {
         NavigationView {
             List(selection: $selectedTask) {
-                ForEach(mockData) { task in
+                ForEach(realmManager.tasks) { task in
                     NavigationLink {
                         AllTasksDetail()
                     } label: {
@@ -33,6 +32,6 @@ struct AllTasksList: View {
 struct AllTasksList_Previews: PreviewProvider {
     static var previews: some View {
         AllTasksList()
-            .environmentObject(DataLoad())
+            .environmentObject(RealmManager())
     }
 }

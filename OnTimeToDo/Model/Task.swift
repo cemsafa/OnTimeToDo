@@ -6,15 +6,16 @@
 //
 
 import Foundation
+import RealmSwift
 
-struct Task: Hashable, Codable, Identifiable {
-    var id: Int
-    var name: String
-    var description: String
-    var deadLine: String
+class Task: Object, ObjectKeyIdentifiable {
+    @Persisted(primaryKey: true) var id: ObjectId
+    @Persisted var name: String
+    @Persisted var definition: String
+    @Persisted var deadLine: String
+    @Persisted var status: Status
     
-    var status: Status
-    enum Status: String, CaseIterable ,Codable {
+    enum Status: String, PersistableEnum {
         case notStarted = "Not Started"
         case inProgress = "In Progress"
         case completed = "Completed"

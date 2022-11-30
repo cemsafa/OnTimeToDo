@@ -10,7 +10,7 @@ import iPhoneNumberField
 
 struct EditProfile: View {
     let onSave: () -> ()
-    @ObservedObject var realmManager =  RealmManager.shared
+    @ObservedObject var realmManager = RealmManager.shared
     @Binding public var isEditing: Bool
     
     @Binding public var name: String

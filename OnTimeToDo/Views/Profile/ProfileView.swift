@@ -10,7 +10,7 @@ import iPhoneNumberField
 import RealmSwift
 
 struct ProfileView: View {
-    @ObservedObject var realmManager =  RealmManager.shared
+    @ObservedObject var realmManager = RealmManager.shared
     
     @State private var name: String = ""
     @State private var phone: String = ""
@@ -74,6 +74,7 @@ struct ProfileView: View {
                             self.isEditing.toggle()
                         }, label: {
                             Text("Cancel")
+                                .foregroundColor(.red)
                         }))
                 }
             }

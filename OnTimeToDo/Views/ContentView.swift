@@ -25,12 +25,14 @@ struct ContentView: View {
                     Label("All Tasks", systemImage: "list.dash")
                 }
                 .tag(Tab.allTasks)
+                .environmentObject(realmManager)
             
-            TaskGroups()
+            TaskGroupsList()
                 .tabItem {
                     Label("Task Groups", systemImage: "folder.fill")
                 }
                 .tag(Tab.taskGroups)
+                .environmentObject(realmManager)
             
             ProfileView()
                 .tabItem {
@@ -45,6 +47,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .environmentObject(DataLoad())
+            .environmentObject(RealmManager())
     }
 }
