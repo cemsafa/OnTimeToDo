@@ -19,6 +19,12 @@ struct Helper {
         return formatter.date(from: date) ?? Date.now
     }
     
+    static func dateToString(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return String("\(formatter.string(from: date))")
+    }
+    
     static func formatDate(date: Date) -> some View {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium

@@ -178,9 +178,25 @@ final class RealmManager: ObservableObject {
                 try localRealm.write {
                     localRealm.delete(taskToDelete)
                     getTasks()
+                    getTaskGroups()
                 }
             } catch {
-                print("Error deleting TaskGroup on Realm: \(error)")
+                print("Error deleting Task on Realm: \(error)")
+            }
+        }
+    }
+    
+    func updateTask(id: ObjectId, status: Task.Status) {
+        if let localRealm = localRealm {
+            do {
+                let taskToUpdate = localRealm.objects(Task.self).filter(NSPredicate(format: "id == %@", id))
+                guard !taskToUpdate.isEmpty else { return }
+                try localRealm.write {
+                    taskToUpdate.first!.status = status
+                    getTasks()
+                }
+            } catch {
+                print("Error deleting Task on Realm: \(error)")
             }
         }
     }

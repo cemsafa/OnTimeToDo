@@ -15,12 +15,40 @@ struct AllTasksList: View {
         NavigationView {
             List(selection: $selectedTask) {
                 ForEach(realmManager.tasks) { task in
-                    NavigationLink {
-                        AllTasksDetail()
-                    } label: {
-                        AllTasksRow(task: task)
+                    if !task.isInvalidated {
+                        NavigationLink {
+                            AllTasksDetail(task: task)
+                        } label: {
+                            AllTasksRow(task: task)
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                realmManager.deleteTask(id: task.id)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                            Button {
+                                realmManager.updateTask(id: task.id, status: .notStarted)
+                            } label: {
+                                Label("Not Started", systemImage: "multiply.circle.fill")
+                            }
+                            .tint(.red)
+                            Button {
+                                realmManager.updateTask(id: task.id, status: .inProgress)
+                            } label: {
+                                Label("In Progress", systemImage: "hourglass.circle.fill")
+                            }
+                            .tint(.yellow)
+                            Button {
+                                realmManager.updateTask(id: task.id, status: .completed)
+                            } label: {
+                                Label("Completed", systemImage: "checkmark.circle.fill")
+                            }
+                            .tint(.green)
+                        }
                     }
-
                 }
             }
             .navigationTitle("All Tasks")
